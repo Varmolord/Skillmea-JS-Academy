@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Yablkova hra</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:900">
+	<link rel="stylesheet" href="./css/style.css">
+	<style>
+
+		html, body {
+			overflow: hidden;
+		}
+
+		img {
+			user-select: none;
+			-webkit-user-drag: none;
+			cursor: pointer;
+			z-index: 100;
+		}
+		.score{
+			position: relative;
+			top: 20px;	
+			color: greenyellow;
+		}
+
+		@keyframes padani { /*Animace padání*/
+				to
+				{
+					transform : translateY(100vh); 
+
+				}
+				
+			}
+	
+	</style>
+</head>
+<body>
+
+	<main>
+		<article class="content container">
+			
+			<h2 class="shadow">Kdo je největší</h2>
+			<h1 class="shadow">S*X MACHŠINA?</h1>
+			<h1 class="shadow">! Yablko !</h1>
+			<br/>
+			<h1 class="score">0 🍏</h1>
+			
+		</article>
+	</main>
+	
+	
+	<script>
+
+	function random(min,max){
+		return Math.round(Math.random() * (max-min) + min);
+	}
+
+	
+	class Hra {
+		constructor(){
+			this.obrazok = document.createElement("img");
+			this.velkost = random(50, 150);
+			this.rychlost =  random(4000, 10000);
+			this.poziciaVyska = Math.floor(Math.random() * 60);
+			
+			this.obrazok.style = "position: absolute; top: " + this.poziciaVyska + "%; left: " + Math.floor(Math.random() * 100) + "%; "+ "transform: rotate(" + Math.floor(Math.random() * 360) + "deg); " + "width: " + this.velkost + "px;" + " height: " + this.velkost + "px ;" + " animation: padani " + this.rychlost + "ms linear infinite;";
+			//Upravíme styl obrázku tak aby padal, točil se apod.
+
+			this.obrazok.src = "./images/"+random(1,3)+".png";
+			//Cesta k obrázkům 
+
+			document.querySelector(".content.container").appendChild(this.obrazok);
+			
+			//Event pro "Poslouchání kliknutí"
+			this.obrazok.addEventListener("click", function(){
+				this.remove();
+				document.querySelector(".score").innerText = parseInt(document.querySelector(".score").innerText) + 1 + " 🍏";
+			}); 
+
+			//Nastavení intervalu pro padání obrázků
+			setInterval(function(){
+				let imgPoziciaY = this.obrazok.getBoundingClientRect().y;
+				if(imgPoziciaY >= window.innerHeight-this.obrazok.height){
+					this.konec();
+				}
+			}.bind(this),1000);
+		}
+		
+		konec() //Funkce pro konec hry
+		{
+			clearInterval(casovac);
+			document.querySelectorAll("img").forEach(function(img){
+				img.remove();
+			});
+			if(document.querySelector("#konec")){
+				return;
+			}
+			let blok = document.createElement("div");
+			blok.id = "konec";
+			blok.style = " transform: translateY(-50%) translateX(-50%); position: absolute; top: 50%; left: 50%; width: 600px; height: 400px; background-color: rgba(0,0,0,0.6); border-radius: 20px; ";
+			document.querySelector(".content.container").appendChild(blok);
+			let h1 = document.createElement("h1");
+			h1.innerText = "Konec hry!";
+			h1.style = " text-align: center; margin-top: 50px; padding: 20px";			
+			blok.appendChild(h1);
+
+			let h3 = document.createElement("h3");
+
+			let ScoreText = "Povedlo se ti chytit " + document.querySelector(".score").innerText + " Yablk";
+			h3.innerText = ScoreText;
+			blok.appendChild(h3);
+			h3.style = " text-align: center; font-size: 30px; margin-top: 20px; padding: 20px";
+
+			let h2 = document.createElement("h2");
+			h2.innerText = "🔁 Zkusit znovu";
+			h2.style = "color: #ACCE55; text-align: center; font-size: 40px; margin-top: 20px; cursor: pointer; left: 0; text-shadow: 2px 2px 2px #000;";
+			blok.appendChild(h2);
+			h2.addEventListener("click", function(){
+				blok.remove();
+				document.querySelector(".score").innerText = 0;
+				casovac = setInterval(function(){
+					new Hra();
+				},random(500, 1500));
+		
+			});
+			
+		}
+	}
+		
+		let casovac = setInterval(function(){
+			new Hra();
+		},random(500, 1500));
+					
+			</script>
+
+</body>
+</html>
